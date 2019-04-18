@@ -30,9 +30,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * Require login to access internal pages and configure login form.
      */
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
         // Not using Spring CSRF here to be able to use plain HTML for the login page
-        http.csrf().disable()
+        httpSecurity.csrf().disable()
 
                 // Register our CustomRequestCache, that saves unauthorized access attempts, so
                 // the user is redirected after login.
@@ -53,6 +53,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 // Configure logout
                 .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
+
+        // this is for h2 console - enable this for dev/test profile
+        httpSecurity.headers().frameOptions().disable();
     }
 
     @Bean

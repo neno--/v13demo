@@ -1,0 +1,38 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  #spring.datasource.url=jdbc:h2:file:~/test
+
+  datasource:
+    url: jdbc:h2:mem:v13demo
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  flyway:
+    enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+    properties:
+      hibernate:
+        type: TRACE
+        format_sql: true
+  servlet:
+    multipart:
+      enabled: false # This is a workaround for https://github.com/vaadin/spring/issues/381
+
+# log param values in queries
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+server:
+  port: 8080
