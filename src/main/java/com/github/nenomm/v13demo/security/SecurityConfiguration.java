@@ -1,15 +1,12 @@
 package com.github.nenomm.v13demo.security;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * Configures spring security, doing the following:
@@ -26,13 +23,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_URL = "/login";
     private static final String LOGOUT_SUCCESS_URL = "/login";
 
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
+
+    @Override
+    protected void configure(final AuthenticationManagerBuilder p_auth) throws Exception {
+        p_auth.authenticationProvider(authProvider);
+    }
+
     /**
      * Require login to access internal pages and configure login form.
      */
     @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    protected void configure(final HttpSecurity p_httpSecurity) throws Exception {
         // Not using Spring CSRF here to be able to use plain HTML for the login page
-        httpSecurity.csrf().disable()
+        p_httpSecurity.csrf().disable()
 
                 // Register our CustomRequestCache, that saves unauthorized access attempts, so
                 // the user is redirected after login.
@@ -55,10 +60,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
 
         // this is for h2 console - enable this for dev/test profile
-        httpSecurity.headers().frameOptions().disable();
+        p_httpSecurity.headers().frameOptions().disable();
     }
 
-    @Bean
+/*    @Bean
     @Override
     public UserDetailsService userDetailsService() {
         UserDetails user =
@@ -68,14 +73,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .build();
 
         return new InMemoryUserDetailsManager(user);
-    }
+    }*/
 
     /**
      * Allows access to static resources, bypassing Spring security.
      */
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(
+    public void configure(final WebSecurity p_web) throws Exception {
+        p_web.ignoring().antMatchers(
                 // Vaadin Flow static resources
                 "/VAADIN/**",
 

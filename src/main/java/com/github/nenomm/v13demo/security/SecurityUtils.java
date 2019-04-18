@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * SecurityUtils takes care of all such static operations that have to do with
  * security and querying rights from different beans of the UI.
- *
  */
 public final class SecurityUtils {
 
@@ -23,12 +22,11 @@ public final class SecurityUtils {
      * checking if the request parameter is present and if its value is consistent
      * with any of the request types know.
      *
-     * @param request
-     *            {@link HttpServletRequest}
+     * @param p_request {@link HttpServletRequest}
      * @return true if is an internal framework request. False otherwise.
      */
-    static boolean isFrameworkInternalRequest(HttpServletRequest request) {
-        final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
+    static boolean isFrameworkInternalRequest(final HttpServletRequest p_request) {
+        final String parameterValue = p_request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
         return parameterValue != null
                 && Stream.of(RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
     }
