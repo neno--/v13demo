@@ -1,12 +1,18 @@
 package com.github.nenomm.v13demo.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * Configures spring security, doing the following:
@@ -18,10 +24,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private static final String LOGIN_PROCESSING_URL = "/login";
-    private static final String LOGIN_FAILURE_URL = "/login";
-    private static final String LOGIN_URL = "/login";
-    private static final String LOGOUT_SUCCESS_URL = "/login";
+    @Value("${app.urlMapping}")
+    private String appUrlMapping;
+
+    private static final String LOGIN_PROCESSING_URL = "login";
+    private static final String LOGIN_FAILURE_URL = "login";
+    private static final String LOGIN_URL = "login";
+    private static final String LOGOUT_SUCCESS_URL = "login";
 
     @Autowired
     private CustomAuthenticationProvider authProvider;
@@ -36,6 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(final HttpSecurity p_httpSecurity) throws Exception {
+
         // Not using Spring CSRF here to be able to use plain HTML for the login page
         p_httpSecurity.csrf().disable()
 
@@ -53,17 +63,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
 
                 // Configure the login page.
-                .and().formLogin().loginPage(LOGIN_URL).permitAll().loginProcessingUrl(LOGIN_PROCESSING_URL)
-                .failureUrl(LOGIN_FAILURE_URL)
+                .and().formLogin().loginPage(appUrlMapping + LOGIN_URL).permitAll().loginProcessingUrl(appUrlMapping + LOGIN_PROCESSING_URL)
+                .failureUrl(appUrlMapping + LOGIN_FAILURE_URL)
 
                 // Configure logout
-                .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
+                .and().logout().logoutSuccessUrl(appUrlMapping + LOGOUT_SUCCESS_URL);
 
         // this is for h2 console - enable this for dev/test profile
         p_httpSecurity.headers().frameOptions().disable();
+
+
     }
 
-/*    @Bean
+    @Bean
     @Override
     public UserDetailsService userDetailsService() {
         UserDetails user =
@@ -73,7 +85,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .build();
 
         return new InMemoryUserDetailsManager(user);
-    }*/
+    }
 
     /**
      * Allows access to static resources, bypassing Spring security.

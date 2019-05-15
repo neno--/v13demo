@@ -18,21 +18,28 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
-    show-sql: true
+    #    show-sql: true
 
     properties:
       hibernate:
-        type: TRACE
-        format_sql: true
+  #        type: TRACE
+  #        format_sql: true
   servlet:
     multipart:
       enabled: false # This is a workaround for https://github.com/vaadin/spring/issues/381
 
 # log param values in queries
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 server:
   port: 8080
+
+# custom addition
+app:
+  urlMapping: /app/
+
+vaadin:
+  urlMapping: /app/*
